@@ -15,7 +15,7 @@ int main(int argc, char *argv[]){
 
 	//Valida os parametros passados pelo usuário
 	if(argc!=3){
-		printf("Parâmetros: servidor <porta> <diretório>\nExemplo: servidor 10000 \\home\\user\\imagens \n");
+		printf("Parâmetros: <porta> <diretório>\nExemplo: servidor 10000 /home/user/Imagens/ \n");
 		exit(1);
 	}
 
