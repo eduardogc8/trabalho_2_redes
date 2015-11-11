@@ -1,4 +1,4 @@
-# Sincronizar Diretório de Imagens
+### Sincronizar Diretório de Imagens
 
 Executar o *cliente* na estação cliente e executar o *servidor* na estação servidor.
 
