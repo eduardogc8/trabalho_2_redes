@@ -17,7 +17,7 @@ int rem_port;
 struct sockaddr_in rem_addr;
 int rem_sockfd;
 
-void validar_argumentos(int argc, char *argv);
+void validar_argumentos(int argc, char *argv[]);
 void configurar_sockaddr_in(char *argv[]);
 void configurar_socket();
 void conectar();
@@ -25,10 +25,17 @@ void enviar();
 void fechar_conexoes();
 
 int main(int argc, char *argv[]){
-	
+	validar_argumentos(argc, argv);
+	configurar_sockaddr_in(argv);
+	configurar_socket();
+	conectar();
+	zerar_buffer();
+	buffer[0] = 'H';
+	enviar();
+	fechar_conexoes();
 }
 
-void validar_argumentos(int argc, char *argv){
+void validar_argumentos(int argc, char *argv[]){
 	if (argc!=4){
 		printf("Parâmetros: <porta> <endereço do servidor> <diretório>\nExemplo: cliente 10000 127.0.0.1 /home/user/Imagens/\n");
 		exit(1);
@@ -36,8 +43,8 @@ void validar_argumentos(int argc, char *argv){
 }
 
 void configurar_sockaddr_in(char *argv[]){
-	rem_hostname = argv[1];
-	rem_port = atoi(argv[2]);
+	rem_hostname = argv[2];
+	rem_port = atoi(argv[1]);
 	rem_addr.sin_family = AF_INET; /* familia do protocolo*/
 	rem_addr.sin_addr.s_addr = inet_addr(rem_hostname); /* endereco IP local */
 	rem_addr.sin_port = htons(rem_port);

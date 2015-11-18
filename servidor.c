@@ -15,7 +15,7 @@
 int loc_sockfd, loc_newsockfd, tamanho;
 struct sockaddr_in loc_addr;
 
-void validar_argumentos(int argc, char *argv);
+void validar_argumentos(int argc, char *argv[]);
 void configurar_sockaddr_in(char *argv[]);
 void configurar_socket();
 void conectar();
@@ -24,10 +24,19 @@ void receber();
 void fechar_conexoes();
 
 int main(int argc, char *argv[]){
-
+	validar_argumentos(argc, argv);
+	configurar_sockaddr_in(argv);
+	configurar_socket();
+	conectar();
+	printf(" Aguardando Conexão ... \n");
+	aguardar_conexao();
+	zerar_buffer();
+	receber();
+	printf("%s\n", buffer);
+	fechar_conexoes();
 }
 
-void validar_argumentos(int argc, char *argv){
+void validar_argumentos(int argc, char *argv[]){
 	if(argc!=3){
 		printf("Parâmetros: <porta> <diretório>\nExemplo: servidor 10000 /home/user/Imagens/ \n");
 		exit(1);
