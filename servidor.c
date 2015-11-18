@@ -8,70 +8,65 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #include "estrutura.h"
 
+int loc_sockfd, loc_newsockfd, tamanho;
+struct sockaddr_in loc_addr;
+
+void validar_argumentos(int argc, char *argv);
+void configurar_sockaddr_in(char *argv[]);
+void configurar_socket();
+void conectar();
+void aguardar_conexao();
+void receber();
+void fechar_conexoes();
+
 int main(int argc, char *argv[]){
 
-	//Valida os parametros passados pelo usuário
+}
+
+void validar_argumentos(int argc, char *argv){
 	if(argc!=3){
 		printf("Parâmetros: <porta> <diretório>\nExemplo: servidor 10000 /home/user/Imagens/ \n");
 		exit(1);
 	}
-
-	//Configurando o socket
-	int local_socket;
-	struct sockaddr_in local_addr;
-
-	local_socket = socket(AF_INET, SOCK_STREAM, 0);
-
-	if (local_socket < 0) {
-		perror("Criando stream socket");
-		exit(1);
-	}
-
-	local_addr.sin_family = AF_INET; /* familia do protocolo*/
-	local_addr.sin_addr.s_addr = INADDR_ANY; /* endereco IP local */
-	local_addr.sin_port = htons(atoi(argv[1])); /* porta local  */
-	bzero(&(local_addr.sin_zero), 8);
-
-	if (bind(local_socket, (struct sockaddr *) &local_addr, sizeof(struct sockaddr)) < 0) {
-		perror("Ligando stream socket");
-		exit(1);
-	}
-
-	listen(local_socket, 5);
-	printf("> aguardando conexao\n");
-
-	int tamanho = sizeof(struct sockaddr_in);
-   	/* Accept permite aceitar um pedido de conexão, devolve um novo "socket" já ligado ao emissor do pedido e o "socket" original*/
-	/* parâmetros(descritor socket, estrutura do endereço local, comprimento do endereço)*/ 
-    int local_newsocket =	accept(local_socket, (struct sockaddr *)&local_addr, &tamanho);
-
-    char linha[81];
-
-	do  {
-		/* parâmetros(descritor socket, endereço da memória, tamanho da memória, flag) */
- 		recv(local_newsocket, &linha, sizeof(linha), 0);
-		printf("Recebi %s\n", linha);
-
-		/* parâmetros(descritor socket, endereço da memória, tamanho da memória, flag) */ 
-		send(local_newsocket, &linha, sizeof(linha), 0);
-		printf("Renvia %s\n", linha);
-	}while(strcmp(linha,"exit"));
-	/* fechamento do socket local */ 
-	close(local_socket);
-	close(local_newsocket);
-
-
-	//Atribui o argumento diretorio passado como parametro e coloca em uma variável
-	char *diretorio;
-	int size_argv = strlen(argv[2]);
-	diretorio = malloc(size_argv+1);
-	strcpy(diretorio, argv[2]);
-
-	listar_arquivos_imagens(diretorio);
-
 }
 
+void configurar_sockaddr_in(char *argv[]){
+	loc_addr.sin_family = AF_INET;
+	loc_addr.sin_addr.s_addr = INADDR_ANY;
+	loc_addr.sin_port = htons(atoi(argv[1]));
+	bzero(&(loc_addr.sin_zero), 8);
+}
 
+void configurar_socket(){
+	loc_sockfd = socket(AF_INET, SOCK_STREAM, 0);	
+	if (loc_sockfd < 0) {
+		perror("socket");
+		exit(1);
+	}
+}
+
+void conectar(){
+	if (bind(loc_sockfd, (struct sockaddr *) &loc_addr, sizeof(struct sockaddr)) < 0) {
+		perror("bind");
+		exit(1);
+	}
+	listen(loc_sockfd, 5);
+}
+
+void aguardar_conexao(){
+	tamanho = sizeof(struct sockaddr_in);
+    loc_newsockfd =	accept(loc_sockfd, (struct sockaddr *)&loc_addr, &tamanho);
+}
+
+void receber(){
+	recv(loc_newsockfd, buffer, sizeof(buffer), 0);
+}
+
+void fechar_conexoes(){
+	close(loc_sockfd);
+	close(loc_newsockfd);
+}

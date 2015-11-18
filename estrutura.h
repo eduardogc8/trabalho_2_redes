@@ -2,7 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <dirent.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <unistd.h>
+
+#define BUFFER_SIZE  4096
+#define SEPARAR_DADOS '='
+#define SEPARAR_ARQUIVOS ',' 
 
 const char *TIPOS_IMAGENS[] = {"png", "jpg", "jpeg", "gif", "dib", "bmp", "tiff", "raw", "svg", "webp", "exif"};
 
@@ -20,6 +29,41 @@ int numero_imagens(char *diretorio);
 // Retorna 1 se a string passada como parametros estiver na lista de tipos de imagens (TIPOS_IMAGENS)
 int in_tipos_imagens(char *tipo);
 
+//Transforma os dados em formato de arquivo em uma lista do tipo String para ser transmitido por socket
+char* listar_arquivos(arquivo* arquivos);
+
+char* listar_arquivos(arquivo* arquivos){
+	char retorno[BUFFER_SIZE];
+	bzero(retorno, BUFFER_SIZE);
+	int indice = 0;
+
+	while(arquivos->tamanho > 0 && indice < BUFFER_SIZE){
+		for (int i = 0; i < strlen(arquivos->nome); ++i){
+			retorno[indice] = arquivos->nome[i];
+			 indice++;
+		}
+
+		char num[10];
+		sprintf(num, "%d", arquivos->tamanho);
+		retorno[indice] = SEPARAR_DADOS;
+		indice++;
+		for (int i = 0; i < strlen(num); ++i){
+			if(num[i]=='\000'){
+				break;
+			}
+			retorno[indice] = num[i];
+			indice++;
+		}
+		retorno[indice] = SEPARAR_ARQUIVOS;
+		indice++;
+		arquivos++;
+	}
+
+	char * ret = malloc(sizeof(retorno));
+	memcpy(ret, retorno, sizeof(retorno));
+	return ret;
+}
+
 int in_tipos_imagens(char *tipo){
 	int i;
 	for(i=0;i<sizeof(TIPOS_IMAGENS);i++){
@@ -33,19 +77,19 @@ int in_tipos_imagens(char *tipo){
 
 
 arquivo * listar_arquivos_imagens(char *diretorio){
+	
+	//arquivo* arquivos = malloc(numero_imagens(diretorio) * sizeof(arquivo));
+	arquivo arquivos[numero_imagens(diretorio)];
+
+	//Acessar diretório
 	DIR *dir;
 	struct dirent *ep;
 	dir = opendir(diretorio);
-	
 	//Valida o diretório especificado pelo usuário
 	if(dir == NULL){
 		printf("O diretório \"%s\" é inválido!\n", diretorio);
 		exit(1);
 	}
-
-	//arquivo* arquivos = malloc(numero_imagens(diretorio) * sizeof(arquivo));
-	arquivo arquivos[numero_imagens(diretorio)];
-
 	int count = 0;
 	while (ep = readdir(dir)){
 		char * arquivo_nome = malloc(sizeof(ep->d_name));
@@ -117,4 +161,13 @@ int numero_imagens(char *diretorio){
 	(void) closedir(dir);
 	return num_arquivos;
 }
+
+char buffer[BUFFER_SIZE];
+
+//Zera o buffer
+void zerar_buffer(){
+	bzero(buffer, BUFFER_SIZE);
+}
+
+
 
