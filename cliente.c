@@ -29,8 +29,7 @@ int main(int argc, char *argv[]){
 	configurar_sockaddr_in(argv);
 	configurar_socket();
 	conectar();
-	zerar_buffer();
-	buffer[0] = 'H';
+	buffer_criar_arquivo("pmg.txt");
 	enviar();
 	fechar_conexoes();
 }

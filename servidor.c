@@ -14,6 +14,7 @@
 
 int loc_sockfd, loc_newsockfd, tamanho;
 struct sockaddr_in loc_addr;
+char* destino;
 
 void validar_argumentos(int argc, char *argv[]);
 void configurar_sockaddr_in(char *argv[]);
@@ -22,15 +23,17 @@ void conectar();
 void aguardar_conexao();
 void receber();
 void fechar_conexoes();
+void criar_arquivo();
 
 int main(int argc, char *argv[]){
 	validar_argumentos(argc, argv);
+	destino = malloc(sizeof(argv[2]));
+	strcpy(destino, argv[2]);
 	configurar_sockaddr_in(argv);
 	configurar_socket();
 	conectar();
 	printf(" Aguardando Conexão ... \n");
 	aguardar_conexao();
-	zerar_buffer();
 	receber();
 	printf("%s\n", buffer);
 	fechar_conexoes();
@@ -72,10 +75,41 @@ void aguardar_conexao(){
 }
 
 void receber(){
+	printf(".\n");
 	recv(loc_newsockfd, buffer, sizeof(buffer), 0);
+	printf(".\n");
+	if(buffer[0]=='-'){
+		if(buffer[1]=='C'){
+			criar_arquivo();
+		}else if(buffer[1]=='E'){
+			//ToDo - Escrever no arquivo
+		}else if(buffer[1]=='F'){
+			//Todo - Fechar arquivo
+		}else if(buffer[1]=='D'){
+			//Todo - Deletar arquivo
+		}else{
+			printf("Erro: Comando de mensagem desconhecido!\n");
+		}
+	}else{
+		printf("Erro: Mensagem desconhecida!\n");
+	}
 }
 
 void fechar_conexoes(){
 	close(loc_sockfd);
 	close(loc_newsockfd);
+}
+
+void criar_arquivo(){
+	FILE *fp;
+	char *nome = malloc(sizeof(destino));
+	strcpy(nome, destino);
+	char aux[strlen(buffer)];
+	for (int i = 0; i < strlen(buffer); ++i){
+		aux[i] = buffer[i+2];
+	}
+	printf("Nome = %s\nAux=%s\n", nome, aux);
+	strcat(nome, aux);
+	printf("Nome = %s\n", nome);
+	fp = fopen("/home/eduardo/Unisc/outro.txt", "w");
 }

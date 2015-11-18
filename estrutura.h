@@ -32,6 +32,11 @@ int in_tipos_imagens(char *tipo);
 //Transforma os dados em formato de arquivo em uma lista do tipo String para ser transmitido por socket
 char* listar_arquivos(arquivo* arquivos);
 
+void buffer_criar_arquivo(char* nome_arquivo);
+void escrever_buffer(char* texto);
+char* encher_buffer_arquivo(FILE* fl, int inicio);
+void zerar_buffer();
+
 char* listar_arquivos(arquivo* arquivos){
 	char retorno[BUFFER_SIZE];
 	bzero(retorno, BUFFER_SIZE);
@@ -163,10 +168,45 @@ int numero_imagens(char *diretorio){
 }
 
 char buffer[BUFFER_SIZE];
+int indice_buffer = 0;
 
 //Zera o buffer
 void zerar_buffer(){
 	bzero(buffer, BUFFER_SIZE);
+	indice_buffer = 0;
+}
+
+char* encher_buffer_arquivo(FILE* fl, int inicio){
+	zerar_buffer();
+	int c;
+	escrever_buffer("-E");
+	while((c = fgetc(fl)) != EOF && indice_buffer < BUFFER_SIZE){
+		buffer[indice_buffer] = c;
+		indice_buffer++;
+	}
+}
+
+void escrever_buffer(char* texto){
+	for (int i = 0; i < strlen(texto); ++i){
+		if (indice_buffer < BUFFER_SIZE){
+			buffer[indice_buffer] = texto[i];
+			indice_buffer++;
+		}else{
+			break;
+		}
+	}
+}
+
+void buffer_criar_arquivo(char* nome_arquivo){
+	zerar_buffer();
+	escrever_buffer("-C");
+	escrever_buffer(nome_arquivo);
+}
+
+char* char_para_ponteiro(char c[], int inicio){
+	char *ret;
+	ret = strcpy(ret, c);
+	return ret;
 }
 
 
