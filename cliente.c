@@ -29,7 +29,11 @@ int main(int argc, char *argv[]){
 	configurar_sockaddr_in(argv);
 	configurar_socket();
 	conectar();
-	buffer_criar_arquivo("pmg.txt");
+	buffer_criar_arquivo("arquivo_novo.txt");
+	enviar();
+	buffer_escrever_arquivo("abcd e f \ng h i j");
+	enviar();
+	buffer_encerrar_conexao();
 	enviar();
 	fechar_conexoes();
 }

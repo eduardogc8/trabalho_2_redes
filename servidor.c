@@ -15,6 +15,7 @@
 int loc_sockfd, loc_newsockfd, tamanho;
 struct sockaddr_in loc_addr;
 char* destino;
+FILE *fp;
 
 void validar_argumentos(int argc, char *argv[]);
 void configurar_sockaddr_in(char *argv[]);
@@ -24,6 +25,8 @@ void aguardar_conexao();
 void receber();
 void fechar_conexoes();
 void criar_arquivo();
+void escrever_arquivo();
+void fechar_arquivo();
 
 int main(int argc, char *argv[]){
 	validar_argumentos(argc, argv);
@@ -34,9 +37,10 @@ int main(int argc, char *argv[]){
 	conectar();
 	printf(" Aguardando Conexão ... \n");
 	aguardar_conexao();
-	receber();
-	printf("%s\n", buffer);
-	fechar_conexoes();
+	while(1){
+		receber();
+	}
+	//printf("%s\n", buffer);
 }
 
 void validar_argumentos(int argc, char *argv[]){
@@ -79,16 +83,24 @@ void receber(){
 	recv(loc_newsockfd, buffer, sizeof(buffer), 0);
 	printf(".\n");
 	if(buffer[0]=='-'){
+		printf("Comando: -%c\n", buffer[1]);
 		if(buffer[1]=='C'){
 			criar_arquivo();
 		}else if(buffer[1]=='E'){
-			//ToDo - Escrever no arquivo
+			escrever_arquivo();
 		}else if(buffer[1]=='F'){
-			//Todo - Fechar arquivo
+			fechar_arquivo();
 		}else if(buffer[1]=='D'){
 			//Todo - Deletar arquivo
+		}else if(buffer[1]=='S'){
+			fechar_conexoes();
+			exit(1);
+		}else if(buffer[1]=='A'){
+			//Aguardar
 		}else{
 			printf("Erro: Comando de mensagem desconhecido!\n");
+			fechar_conexoes();
+			exit(1);
 		}
 	}else{
 		printf("Erro: Mensagem desconhecida!\n");
@@ -101,8 +113,8 @@ void fechar_conexoes(){
 }
 
 void criar_arquivo(){
-	FILE *fp;
-	char *nome = malloc(sizeof(destino));
+	
+	char *nome = malloc(sizeof(destino)+sizeof(buffer));
 	strcpy(nome, destino);
 	char aux[strlen(buffer)];
 	for (int i = 0; i < strlen(buffer); ++i){
@@ -111,5 +123,24 @@ void criar_arquivo(){
 	printf("Nome = %s\nAux=%s\n", nome, aux);
 	strcat(nome, aux);
 	printf("Nome = %s\n", nome);
-	fp = fopen("/home/eduardo/Unisc/outro.txt", "w");
+	fp = fopen(nome, "w");
+}
+
+void escrever_arquivo(){
+	if(!fp){
+		printf("Erro ao abrir arquivo para escrita!\n");
+		exit(1);
+	}
+	for (int i = 2; i < BUFFER_SIZE; ++i){
+		if(buffer[i]=='\00'){
+			printf("Entro no NULL\n");
+			break;
+		}
+		printf("%c", buffer[i]);
+		fputc(buffer[i], fp);
+	}
+}
+
+void fechar_arquivo(){
+	fclose(fp);
 }

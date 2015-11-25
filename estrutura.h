@@ -33,7 +33,9 @@ int in_tipos_imagens(char *tipo);
 char* listar_arquivos(arquivo* arquivos);
 
 void buffer_criar_arquivo(char* nome_arquivo);
+void buffer_escrever_arquivo(char* dados);
 void escrever_buffer(char* texto);
+void buffer_encerrar_conexao();
 char* encher_buffer_arquivo(FILE* fl, int inicio);
 void zerar_buffer();
 
@@ -201,6 +203,17 @@ void buffer_criar_arquivo(char* nome_arquivo){
 	zerar_buffer();
 	escrever_buffer("-C");
 	escrever_buffer(nome_arquivo);
+}
+
+void buffer_escrever_arquivo(char* dados){
+	zerar_buffer();
+	escrever_buffer("-E");
+	escrever_buffer(dados);
+}
+
+void buffer_encerrar_conexao(){
+	zerar_buffer();
+	escrever_buffer("-S");
 }
 
 char* char_para_ponteiro(char c[], int inicio){
