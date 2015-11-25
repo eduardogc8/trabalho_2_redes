@@ -104,6 +104,8 @@ void receber(){
 		}
 	}else{
 		printf("Erro: Mensagem desconhecida!\n");
+		fechar_conexoes();
+		exit(1);
 	}
 }
 

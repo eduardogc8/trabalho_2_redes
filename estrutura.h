@@ -10,15 +10,19 @@
 #include <unistd.h>
 
 #define BUFFER_SIZE  4096
-#define SEPARAR_DADOS '='
-#define SEPARAR_ARQUIVOS ',' 
 
 const char *TIPOS_IMAGENS[] = {"png", "jpg", "jpeg", "gif", "dib", "bmp", "tiff", "raw", "svg", "webp", "exif"};
+const int QUANTIDADE_TIPOS_IMAGENS = 11;
+
 
 typedef struct{
 	int tamanho; //Tamanho em bytes do arquivo
 	char *nome; //Nome do arquivo + extenção
 } arquivo;
+
+
+char buffer[BUFFER_SIZE];
+int indice_buffer = 0;
 
 // Retorna a lista de arquivos di diretório informado
 arquivo * listar_arquivos_imagens(char * diretorio); //Arquivos do diretório
@@ -29,60 +33,13 @@ int numero_imagens(char *diretorio);
 // Retorna 1 se a string passada como parametros estiver na lista de tipos de imagens (TIPOS_IMAGENS)
 int in_tipos_imagens(char *tipo);
 
-//Transforma os dados em formato de arquivo em uma lista do tipo String para ser transmitido por socket
-char* listar_arquivos(arquivo* arquivos);
-
 void buffer_criar_arquivo(char* nome_arquivo);
 void buffer_escrever_arquivo(char* dados);
 void escrever_buffer(char* texto);
 void buffer_fechar_arquivo();
 void buffer_encerrar_conexao();
-char* encher_buffer_arquivo(FILE* fl, int inicio);
+void encher_buffer_arquivo(FILE* fl, int inicio);
 void zerar_buffer();
-
-char* listar_arquivos(arquivo* arquivos){
-	char retorno[BUFFER_SIZE];
-	bzero(retorno, BUFFER_SIZE);
-	int indice = 0;
-
-	while(arquivos->tamanho > 0 && indice < BUFFER_SIZE){
-		for (int i = 0; i < strlen(arquivos->nome); ++i){
-			retorno[indice] = arquivos->nome[i];
-			 indice++;
-		}
-
-		char num[10];
-		sprintf(num, "%d", arquivos->tamanho);
-		retorno[indice] = SEPARAR_DADOS;
-		indice++;
-		for (int i = 0; i < strlen(num); ++i){
-			if(num[i]=='\000'){
-				break;
-			}
-			retorno[indice] = num[i];
-			indice++;
-		}
-		retorno[indice] = SEPARAR_ARQUIVOS;
-		indice++;
-		arquivos++;
-	}
-
-	char * ret = malloc(sizeof(retorno));
-	memcpy(ret, retorno, sizeof(retorno));
-	return ret;
-}
-
-int in_tipos_imagens(char *tipo){
-	int i;
-	for(i=0;i<sizeof(TIPOS_IMAGENS);i++){
-		if(TIPOS_IMAGENS[i]!=NULL && strcmp(tipo, TIPOS_IMAGENS[i])==0){
-			//printf("tipo %s, ti %s\n", tipo, TIPOS_IMAGENS[i]);
-			return 1;
-		}
-	}
-	return 0;
-}
-
 
 arquivo * listar_arquivos_imagens(char *diretorio){
 	
@@ -170,16 +127,13 @@ int numero_imagens(char *diretorio){
 	return num_arquivos;
 }
 
-char buffer[BUFFER_SIZE];
-int indice_buffer = 0;
-
 //Zera o buffer
 void zerar_buffer(){
 	bzero(buffer, BUFFER_SIZE);
 	indice_buffer = 0;
 }
 
-char* encher_buffer_arquivo(FILE* fl, int inicio){
+void encher_buffer_arquivo(FILE* fl, int inicio){
 	zerar_buffer();
 	int c;
 	escrever_buffer("-E");
@@ -187,6 +141,17 @@ char* encher_buffer_arquivo(FILE* fl, int inicio){
 		buffer[indice_buffer] = c;
 		indice_buffer++;
 	}
+}
+
+int in_tipos_imagens(char *tipo){
+	int i;
+	for(i=0;i<QUANTIDADE_TIPOS_IMAGENS;i++){
+		if(TIPOS_IMAGENS[i]!=NULL && strcmp(tipo, TIPOS_IMAGENS[i])==0){
+			//printf("tipo %s, ti %s\n", tipo, TIPOS_IMAGENS[i]);
+			return 1;
+		}
+	}
+	return 0;
 }
 
 void escrever_buffer(char* texto){

@@ -16,6 +16,7 @@ char *rem_hostname;
 int rem_port;
 struct sockaddr_in rem_addr;
 int rem_sockfd;
+char *destino;
 
 void validar_argumentos(int argc, char *argv[]);
 void configurar_sockaddr_in(char *argv[]);
@@ -23,18 +24,25 @@ void configurar_socket();
 void conectar();
 void enviar();
 void fechar_conexoes();
+void enviar_arquivos(arquivo* arquivos);
 
 int main(int argc, char *argv[]){
 	validar_argumentos(argc, argv);
+	destino = malloc(sizeof(argv[3]));
+	strcpy(destino, argv[3]);
 	configurar_sockaddr_in(argv);
 	configurar_socket();
 	conectar();
+	/*
 	buffer_criar_arquivo("arquivo_novo.txt");
 	enviar();
 	buffer_escrever_arquivo("abcd e f \ng h i j");
 	enviar();
 	buffer_fechar_arquivo();
 	enviar();
+	*/
+	arquivo *arquivos = listar_arquivos_imagens(destino);
+	enviar_arquivos(arquivos);
 	buffer_encerrar_conexao();
 	enviar();
 	fechar_conexoes();
@@ -77,3 +85,20 @@ void enviar(){
 void fechar_conexoes(){
 	close(rem_sockfd);
 }
+
+void enviar_arquivos(arquivo* arquivos){
+	char retorno[BUFFER_SIZE];
+	bzero(retorno, BUFFER_SIZE);
+	int indice = 0;
+	while(arquivos->tamanho > 0){ //Enquanto tiver arquivos
+		buffer_criar_arquivo(arquivos->nome);
+		enviar();
+
+		//Escrever enquanto tiver coisas para serem escritas
+
+		buffer_fechar_arquivo();
+		enviar();
+		arquivos++;
+	}
+}
+
