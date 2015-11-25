@@ -33,6 +33,8 @@ int main(int argc, char *argv[]){
 	enviar();
 	buffer_escrever_arquivo("abcd e f \ng h i j");
 	enviar();
+	buffer_fechar_arquivo();
+	enviar();
 	buffer_encerrar_conexao();
 	enviar();
 	fechar_conexoes();
