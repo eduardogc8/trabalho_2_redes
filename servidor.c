@@ -79,9 +79,7 @@ void aguardar_conexao(){
 }
 
 void receber(){
-	printf(".\n");
 	recv(loc_newsockfd, buffer, sizeof(buffer), 0);
-	printf(".\n");
 	if(buffer[0]=='-'){
 		printf("Comando: -%c\n", buffer[1]);
 		if(buffer[1]=='C'){
@@ -122,10 +120,10 @@ void criar_arquivo(){
 	for (int i = 0; i < strlen(buffer); ++i){
 		aux[i] = buffer[i+2];
 	}
-	printf("Nome = %s\nAux=%s\n", nome, aux);
 	strcat(nome, aux);
-	printf("Nome = %s\n", nome);
-	fp = fopen(nome, "w");
+	printf("Local = %s\n", nome);
+	fp = fopen(nome, "wb");
+	zerar_buffer();
 }
 
 void escrever_arquivo(){
@@ -135,12 +133,12 @@ void escrever_arquivo(){
 	}
 	for (int i = 2; i < BUFFER_SIZE; ++i){
 		if(buffer[i]=='\00'){
-			printf("Entro no NULL\n");
 			break;
 		}
-		printf("%c", buffer[i]);
+		//printf("%c", buffer[i]);
 		fputc(buffer[i], fp);
 	}
+	zerar_buffer();
 }
 
 void fechar_arquivo(){

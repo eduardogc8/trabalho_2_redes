@@ -82,7 +82,7 @@ arquivo * listar_arquivos_imagens(char *diretorio){
 				novo.nome = malloc(sizeof(ep->d_name));
 				memcpy(novo.nome, ep->d_name, sizeof(ep->d_name));
 
-				printf("Arquivo: %s, Tamanho: %d\n", novo.nome, novo.tamanho);
+				//printf("Arquivo: %s, Tamanho: %d\n", novo.nome, novo.tamanho);
 
 				arquivos[count] = novo;
 				count++;

@@ -90,15 +90,44 @@ void enviar_arquivos(arquivo* arquivos){
 	char retorno[BUFFER_SIZE];
 	bzero(retorno, BUFFER_SIZE);
 	int indice = 0;
-	while(arquivos->tamanho > 0){ //Enquanto tiver arquivos
+	while(arquivos->tamanho > 0){ //Enquanto tiver arquivos, //ToDo - trcar arquivos->tamanho > 0 (gambiarra) por algo mais eficiente
 		buffer_criar_arquivo(arquivos->nome);
 		enviar();
 
-		//Escrever enquanto tiver coisas para serem escritas
+		char *nome = malloc(strlen(destino)+strlen(arquivos->nome)+1);
+		strcpy(nome, destino);
+		
+		strcat(nome, arquivos->nome);
+		printf("Local = %s\n", nome);
+		FILE *fp = fopen(nome, "rb");
 
+		//Escrever enquanto tiver coisas para serem escritas
+		zerar_buffer();
+		int c;
+		escrever_buffer("-E");
+		int tem = 0;
+		while((c = fgetc(fp)) != EOF){
+			if(indice_buffer < BUFFER_SIZE){
+				buffer[indice_buffer] = c;
+				indice_buffer++;
+				tem = 1;
+			}else{
+				enviar();
+				zerar_buffer();
+				escrever_buffer("-E");
+				tem = 0;
+			}
+		}
+		if(tem==1){
+			enviar();
+			zerar_buffer();
+			escrever_buffer("-E");
+			tem = 0;
+		}
+
+		zerar_buffer();
 		buffer_fechar_arquivo();
 		enviar();
 		arquivos++;
 	}
 }
-
