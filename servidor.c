@@ -122,7 +122,7 @@ void criar_arquivo(){
 	}
 	strcat(nome, aux);
 	printf("Local = %s\n", nome);
-	fp = fopen(nome, "wb");
+	fp = fopen(nome, "w");
 	zerar_buffer();
 }
 
@@ -132,7 +132,7 @@ void escrever_arquivo(){
 		exit(1);
 	}
 	for (int i = 2; i < BUFFER_SIZE; ++i){
-		if(buffer[i]=='\00'){
+		if(buffer[i]==EOF){
 			break;
 		}
 		//printf("%c", buffer[i]);

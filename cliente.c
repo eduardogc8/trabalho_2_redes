@@ -99,7 +99,7 @@ void enviar_arquivos(arquivo* arquivos){
 		
 		strcat(nome, arquivos->nome);
 		printf("Local = %s\n", nome);
-		FILE *fp = fopen(nome, "rb");
+		FILE *fp = fopen(nome, "r");
 
 		//Escrever enquanto tiver coisas para serem escritas
 		zerar_buffer();
