@@ -131,12 +131,20 @@ void escrever_arquivo(){
 		printf("Erro ao abrir arquivo para escrita!\n");
 		exit(1);
 	}
+
 	for (int i = 2; i < BUFFER_SIZE; ++i){
-		if(buffer[i]==EOF){
-			break;
-		}
 		//printf("%c", buffer[i]);
 		fputc(buffer[i], fp);
+
+		if(buffer[i]=='I'&&i+3<BUFFER_SIZE){
+			if(buffer[i+1]=='E'&&buffer[i+2]=='N'&&buffer[i+3]=='D'){
+				fputc(buffer[i+1], fp);
+				fputc(buffer[i+2], fp);
+				fputc(buffer[i+3], fp);
+				break;
+			}
+		}
+
 	}
 	zerar_buffer();
 }
