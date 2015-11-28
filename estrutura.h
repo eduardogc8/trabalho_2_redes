@@ -11,7 +11,7 @@
 
 #define BUFFER_SIZE  4096
 
-const char *TIPOS_IMAGENS[] = {"png", "jpg", "jpeg", "gif", "dib", "bmp", "tiff", "raw", "svg", "webp", "exif"};
+const char *TIPOS_IMAGENS[] = {"png", "jpg", "jpeg", "gif", "tga", "bmp", "tiff", "tif", "icb", "webp", "exif"};
 const int QUANTIDADE_TIPOS_IMAGENS = 11;
 
 typedef struct{
