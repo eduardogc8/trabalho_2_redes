@@ -6,3 +6,5 @@ Para executar o servidor, primerio compile o arquivo *servidor.c* através do co
 
 Para executar o cliente, primerio compile o arquivo *cliente.c* através do comando `gcc cliente.c -o bin/cliente`, após compilar, execute o programa através do comando `./bin/cliente <porta> <diretório de Imagens>`.
 
+É importante verificar se o diretório do cliente está sem arquivos de imagens ocultos.
+
