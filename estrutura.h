@@ -37,6 +37,7 @@ void buffer_escrever_arquivo(char* dados);
 void escrever_buffer(char* texto);
 void buffer_fechar_arquivo();
 void buffer_encerrar_conexao();
+void buffer_deletar_arquivo(char* nome);
 void encher_buffer_arquivo(FILE* fl, int inicio);
 void zerar_buffer();
 
@@ -184,6 +185,17 @@ void buffer_fechar_arquivo(){
 void buffer_encerrar_conexao(){
 	zerar_buffer();
 	escrever_buffer("-S");
+}
+
+void buffer_deletar_arquivo(char* nome){
+	zerar_buffer();
+	escrever_buffer("-D");
+	escrever_buffer(nome);
+}
+
+void buffer_aguardar(){
+	zerar_buffer();
+	escrever_buffer("-A");
 }
 
 char* char_para_ponteiro(char c[], int inicio){

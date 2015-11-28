@@ -26,6 +26,7 @@ void receber();
 void fechar_conexoes();
 void criar_arquivo();
 void escrever_arquivo();
+void deletar_arquivo();
 void fechar_arquivo();
 
 int main(int argc, char *argv[]){
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]){
 	configurar_sockaddr_in(argv);
 	configurar_socket();
 	conectar();
-	printf(" Aguardando Conexão ... \n");
+	printf("Aguardando Conexão ... \n");
 	aguardar_conexao();
 	while(1){
 		receber();
@@ -81,20 +82,27 @@ void aguardar_conexao(){
 void receber(){
 	recv(loc_newsockfd, buffer, sizeof(buffer), 0);
 	if(buffer[0]=='-'){
-		printf("Comando: -%c\n", buffer[1]);
+		//printf("Comando: -%c\n", buffer[1]);
 		if(buffer[1]=='C'){
+			printf("Criar Arquivo\n");
 			criar_arquivo();
+			printf("Escrever Arquivo . ");
 		}else if(buffer[1]=='E'){
+			printf(". ");
 			escrever_arquivo();
 		}else if(buffer[1]=='F'){
+			printf("\nFechar Arquivo\n");
 			fechar_arquivo();
 		}else if(buffer[1]=='D'){
-			//Todo - Deletar arquivo
+			printf("Deletar Arquivo\n");
+			deletar_arquivo();
+			//Deletar arquivo
 		}else if(buffer[1]=='S'){
 			fechar_conexoes();
+			printf("\nFechar Conexões\n");
 			exit(1);
 		}else if(buffer[1]=='A'){
-			//Aguardar
+			//printf("Aguardar\n");
 		}else{
 			printf("Erro: Comando de mensagem desconhecido!\n");
 			fechar_conexoes();
@@ -121,7 +129,7 @@ void criar_arquivo(){
 		aux[i] = buffer[i+2];
 	}
 	strcat(nome, aux);
-	printf("Local = %s\n", nome);
+	//printf("Local = %s\n", nome);
 	fp = fopen(nome, "w");
 	zerar_buffer();
 }
@@ -147,6 +155,18 @@ void escrever_arquivo(){
 
 	}
 	zerar_buffer();
+}
+
+void deletar_arquivo(){
+	char *nome = malloc(sizeof(destino)+sizeof(buffer));
+	strcpy(nome, destino);
+	char aux[strlen(buffer)];
+	for (int i = 0; i < strlen(buffer); ++i){
+		aux[i] = buffer[i+2];
+	}
+	strcat(nome, aux);
+	printf("Nome: %s\n", nome);
+	remove(nome);
 }
 
 void fechar_arquivo(){
