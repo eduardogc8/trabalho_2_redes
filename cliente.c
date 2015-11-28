@@ -49,8 +49,9 @@ int main(int argc, char *argv[]){
 
 	while(1){
 		char linha[4];
-		printf("Digite 'c' para continuar e 's' para sair.\n");
+		printf("\nDigite 'c' para continuar e 's' para sair: ");
 		fgets(linha, 10, stdin);
+		printf("\n");
 		if(linha[0] == 's'){
 			break;
 		}
@@ -148,6 +149,7 @@ void enviar_arquivos(arquivo* arquivos){
 	int indice = 0;
 	while(arquivos->tamanho > 0){ //Enquanto tiver arquivos, //ToDo - trcar arquivos->tamanho > 0 (gambiarra) por algo mais eficiente
 		buffer_criar_arquivo(arquivos->nome);
+		printf("Criar Arquivo: %s\n", arquivos->nome);
 		enviar();
 
 		char *nome = malloc(strlen(destino)+strlen(arquivos->nome)+1);
@@ -199,7 +201,7 @@ void comparar_arquivos(arquivo *arq1, arquivo *arq2){
 			//enviar mensagem para remover arqs1
 			buffer_deletar_arquivo(arqs1->nome);
 			enviar();
-			printf("Deletar Arquivo %s\n", arqs1->nome);
+			printf("Deletar Arquivo: %s\n", arqs1->nome);
 		}
 		arqs1++;
 	}
@@ -209,9 +211,8 @@ void comparar_arquivos(arquivo *arq1, arquivo *arq2){
 	while(arqs2->tamanho > 0 && arqs2->tamanho != 80){
 	//while(arqs2!=NULL){
 		if(in_arquivos(*arqs2, arq1)==0){
-			//enviar mensagem para criar arqs2
-			printf("tamanho = %i\n", arqs2->tamanho);
-			printf("Criar Arquivo %s\n", arqs2->nome);
+			enviar_arquivo(arqs2->nome);
+			printf("Criar Arquivo: %s\n", arqs2->nome);
 		}
 		arqs2++;
 	}

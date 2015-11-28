@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
 	configurar_sockaddr_in(argv);
 	configurar_socket();
 	conectar();
-	printf("Aguardando Conexão ... \n");
+	printf("Aguardando Conexão ... \n\n");
 	aguardar_conexao();
 	while(1){
 		receber();
@@ -165,7 +165,6 @@ void deletar_arquivo(){
 		aux[i] = buffer[i+2];
 	}
 	strcat(nome, aux);
-	printf("Nome: %s\n", nome);
 	remove(nome);
 }
 
