@@ -13,7 +13,6 @@
 
 const char *TIPOS_IMAGENS[] = {"png", "jpg", "jpeg", "gif", "dib", "bmp", "tiff", "raw", "svg", "webp", "exif"};
 const int QUANTIDADE_TIPOS_IMAGENS = 11;
-const char PNG_END[4];
 
 typedef struct{
 	int tamanho; //Tamanho em bytes do arquivo

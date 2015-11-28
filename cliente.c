@@ -115,10 +115,11 @@ void enviar_arquivos(arquivo* arquivos){
 				enviar();
 				zerar_buffer();
 				escrever_buffer("-E");
-				tem = 0;
+				buffer[indice_buffer] = c;
+				indice_buffer++;
 			}
 		}
-		if(tem==1){
+		if(indice_buffer>0){
 			enviar();
 			zerar_buffer();
 			escrever_buffer("-E");
