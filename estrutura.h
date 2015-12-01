@@ -32,13 +32,28 @@ int numero_imagens(char *diretorio);
 // Retorna 1 se a string passada como parametros estiver na lista de tipos de imagens (TIPOS_IMAGENS)
 int in_tipos_imagens(char *tipo);
 
+//Prepara o buffer para criar um arquivo
 void buffer_criar_arquivo(char* nome_arquivo);
+
+//Prepara o buffer para escrever em um arquivo
 void buffer_escrever_arquivo(char* dados);
+
+//Escreve no buffer
 void escrever_buffer(char* texto);
+
+//Prepara o buffer para fechar o arquivo
 void buffer_fechar_arquivo();
+
+//Prepara o buffer para encerrar a conexão
 void buffer_encerrar_conexao();
+
+//Prepara o buffer para deletar o arquivo
 void buffer_deletar_arquivo(char* nome);
+
+//Enche o buffer com conteudo do arquivo
 void encher_buffer_arquivo(FILE* fl, int inicio);
+
+//Zera o buffer
 void zerar_buffer();
 
 arquivo * listar_arquivos_imagens(char *diretorio){

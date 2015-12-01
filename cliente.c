@@ -18,36 +18,58 @@ struct sockaddr_in rem_addr;
 int rem_sockfd;
 char *destino;
 
+//Valida os argumentos passado por parâmetro
 void validar_argumentos(int argc, char *argv[]);
+
+//Configura o sockeraddr
 void configurar_sockaddr_in(char *argv[]);
+
+//Configura o socket
 void configurar_socket();
+
+//Faz a conexão com o servidor
 void conectar();
+
+//Envia os dados do buffer
 void enviar();
+
+//Fecha a conexão
 void fechar_conexoes();
+
+//Envia os arquivos da pasta destino
 void enviar_arquivos(arquivo* arquivos);
+
+//Envia um arquivo especifico
 void enviar_arquivo(char* arq);
+
+//Compara os arquivos da pasta atualmente com os que tinham antigamente
 void comparar_arquivos(arquivo *arq1, arquivo *arq2);
+
+//Verifica se arquivo está na lista de arquivos
 int in_arquivos(arquivo arq, arquivo *arqs);
 
 int main(int argc, char *argv[]){
+	
 	validar_argumentos(argc, argv);
+
+	//Passa o diretório pra uma String
 	destino = malloc(sizeof(argv[3]));
 	strcpy(destino, argv[3]);
+
+	//Configurações de conexão
 	configurar_sockaddr_in(argv);
 	configurar_socket();
 	conectar();
-	/*
-	buffer_criar_arquivo("arquivo_novo.txt");
-	enviar();
-	buffer_escrever_arquivo("abcd e f \ng h i j");
-	enviar();
-	buffer_fechar_arquivo();
-	enviar();
-	*/
+
+	//Obtém a lista de arquivos do diretório
 	arquivo *arquivos = listar_arquivos_imagens(destino);
+
+	//Envia esses arquivos para o servidor
 	enviar_arquivos(arquivos);
 
 	while(1){
+
+		//Faz a leitura do comando do usuário
 		char linha[4];
 		printf("\nDigite 'c' para continuar e 's' para sair: ");
 		fgets(linha, 10, stdin);
@@ -55,11 +77,14 @@ int main(int argc, char *argv[]){
 		if(linha[0] == 's'){
 			break;
 		}
+
+		//obtem um lista de arquivos atualizado e faz a atualização no servidor
 		arquivo *arquivos2 = listar_arquivos_imagens(destino);
 		comparar_arquivos(arquivos, arquivos2);
 		arquivos = arquivos2;
 	}
 
+	//Encerra a conexão no cliente e no servidor
 	buffer_encerrar_conexao();
 	enviar();
 	fechar_conexoes();
@@ -147,7 +172,7 @@ void enviar_arquivos(arquivo* arquivos){
 	char retorno[BUFFER_SIZE];
 	bzero(retorno, BUFFER_SIZE);
 	int indice = 0;
-	while(arquivos->tamanho > 0){ //Enquanto tiver arquivos, //ToDo - trcar arquivos->tamanho > 0 (gambiarra) por algo mais eficiente
+	while(arquivos->tamanho > 0){ //Enquanto tiver arquivos
 		buffer_criar_arquivo(arquivos->nome);
 		printf("Criar Arquivo: %s\n", arquivos->nome);
 		enviar();
@@ -201,6 +226,7 @@ void comparar_arquivos(arquivo *arq1, arquivo *arq2){
 			//enviar mensagem para remover arqs1
 			buffer_deletar_arquivo(arqs1->nome);
 			enviar();
+			//printf("Tamanho == %i\n", arqs1->tamanho);
 			printf("Deletar Arquivo: %s\n", arqs1->nome);
 		}
 		arqs1++;
@@ -212,6 +238,7 @@ void comparar_arquivos(arquivo *arq1, arquivo *arq2){
 	//while(arqs2!=NULL){
 		if(in_arquivos(*arqs2, arq1)==0){
 			enviar_arquivo(arqs2->nome);
+			//printf("Tamanho == %i\n", arqs2->tamanho);
 			printf("Criar Arquivo: %s\n", arqs2->nome);
 		}
 		arqs2++;
